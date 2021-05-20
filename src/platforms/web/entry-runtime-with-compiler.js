@@ -1,5 +1,10 @@
 /* @flow */
 
+/**
+ * 重写了Vue原型上的$mount方法，增加编辑模板的能力（这是带编译器的完整版本）
+ * 此文件重点是编译模板
+ */
+
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
@@ -19,6 +24,7 @@ Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+  // 获取dom节点
   el = el && query(el)
 
   /* istanbul ignore if */
@@ -32,6 +38,10 @@ Vue.prototype.$mount = function (
   const options = this.$options
   // resolve template/el and convert to render function
   if (!options.render) {
+    // 如果没有render函数，那么需要获取模板
+    // 模板选项可以为字符串或者元素或者属性节点
+    // 如果没有指定模板选项，获取el的值给模板选项
+    // 然后编译模板
     let template = options.template
     if (template) {
       if (typeof template === 'string') {

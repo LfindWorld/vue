@@ -214,6 +214,7 @@ const builds = {
 }
 
 function genConfig (name) {
+  // 确定入口 web/entry-runtime-with-compiler.js
   const opts = builds[name]
   const config = {
     input: opts.entry,

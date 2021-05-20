@@ -1,3 +1,7 @@
+/**
+ * 此模块定义Vue的原型方法
+ * init、state、事件和生命周期
+ */
 import { initMixin } from './init'
 import { stateMixin } from './state'
 import { renderMixin } from './render'

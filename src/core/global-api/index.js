@@ -1,5 +1,11 @@
 /* @flow */
 
+/**
+ * 在Vue上挂载静态方法，set，delete，nextTick，observable
+ * 定义options属性，定义全局组件、指令和过滤器
+ * 添加内置全局组件 keep-alive
+ * 挂载 use，minxin，extend
+ */
 import config from '../config'
 import { initUse } from './use'
 import { initMixin } from './mixin'
@@ -31,6 +37,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   }
   Object.defineProperty(Vue, 'config', configDef)
 
+  // util方法最好不要在外部使用
   // exposed util methods.
   // NOTE: these are not considered part of the public API - avoid relying on
   // them unless you are aware of the risk.
