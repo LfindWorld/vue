@@ -17,11 +17,15 @@ function Vue (options) {
   }
   this._init(options)
 }
-
+// 设置原型的 _init
 initMixin(Vue)
+// 设置原型的 $set $del $wather
 stateMixin(Vue)
+// 设置原型的 $on $once $emit
 eventsMixin(Vue)
+// 设置原型的_update $forceUpdate $destroy
 lifecycleMixin(Vue)
+// 设置原型 $nextTick _o _n _c 等
 renderMixin(Vue)
 
 export default Vue

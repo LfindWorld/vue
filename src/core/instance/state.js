@@ -320,6 +320,9 @@ function createWatcher (
 }
 
 export function stateMixin (Vue: Class<Component>) {
+  // 设置 $data  $props 的getter、setter
+  // 设置原型 $set $del，$watch 方法
+
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.

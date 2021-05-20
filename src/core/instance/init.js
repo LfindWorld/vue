@@ -26,8 +26,10 @@ export function initMixin (Vue: Class<Component>) {
       mark(startTag)
     }
 
+    // Vue的实例不会被观察
     // a flag to avoid this being observed
     vm._isVue = true
+    // 合并选项
     // merge options
     if (options && options._isComponent) {
       // optimize internal component instantiation
@@ -91,7 +93,9 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 }
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
+  // 解析构造函数选项
   let options = Ctor.options
+  // 这里应该是组件
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
