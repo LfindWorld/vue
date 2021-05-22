@@ -145,6 +145,7 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // vm实例挂载响应式属性，值从_data 中获取
       proxy(vm, `_data`, key)
     }
   }

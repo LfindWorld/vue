@@ -43,6 +43,7 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
+    // data属性中增加一个 _ob_ 属性, 值为 Observer 实例
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
       if (hasProto) {
@@ -52,6 +53,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      // 遍历所有的 data 中属性，设置为响应式属性，并且收集依赖，在 setter 中发布通知
       this.walk(value)
     }
   }
@@ -139,6 +141,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 初始化一个被观察者
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -159,6 +162,7 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
+      // Dep 类被添加了 Watch 观察者
       if (Dep.target) {
         dep.depend()
         if (childOb) {

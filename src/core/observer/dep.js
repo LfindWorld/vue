@@ -30,6 +30,7 @@ export default class Dep {
 
   depend () {
     if (Dep.target) {
+      // 使用 Watch 类 的addDep 调用 Dep 类的 addSub 方法，把自己添加进subs
       Dep.target.addDep(this)
     }
   }
