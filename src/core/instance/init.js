@@ -26,10 +26,10 @@ export function initMixin (Vue: Class<Component>) {
       mark(startTag)
     }
 
-    // Vue的实例不会被观察
+    // 1. Vue的实例不会被观察, 标记vm是Vue根实例
     // a flag to avoid this being observed
     vm._isVue = true
-    // 合并选项
+    // 2. 合并选项
     // merge options
     if (options && options._isComponent) {
       // optimize internal component instantiation

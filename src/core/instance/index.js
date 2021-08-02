@@ -1,5 +1,5 @@
 /**
- * 此模块定义Vue的原型方法
+ * INIT 此模块定义Vue的原型方法
  * init、state、事件和生命周期
  */
 import { initMixin } from './init'
@@ -15,8 +15,12 @@ function Vue (options) {
   ) {
     warn('Vue is a constructor and should be called with the `new` keyword')
   }
+  // 开始初始化，开始没有调用，new的时候开始调用
   this._init(options)
 }
+
+// 这里开始挂载静态方法和实例方法
+
 // 设置原型的 _init
 initMixin(Vue)
 // 设置原型的 $set $del $wather
