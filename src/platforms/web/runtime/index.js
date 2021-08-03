@@ -1,6 +1,7 @@
 /* @flow */
 
 /**
+ * 003
  * 安装平台相关的配置，如内置指令，内置组件，patch 函数，$mount方法等
  */
 import Vue from 'core/index'
@@ -35,7 +36,7 @@ Vue.config.isUnknownElement = isUnknownElement
 extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
-// 安装patch函数（比较vnode）
+// 安装原型方法patch（比较vnode）
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 

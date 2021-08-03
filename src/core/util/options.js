@@ -391,6 +391,7 @@ export function mergeOptions (
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
+    // 校验自定义组件名是否合法
     checkComponents(child)
   }
 
@@ -398,14 +399,19 @@ export function mergeOptions (
     child = child.options
   }
 
+  // 格式化props
   normalizeProps(child, vm)
+  // 格式化inject
   normalizeInject(child, vm)
+  // 格式化指令
   normalizeDirectives(child)
 
   // Apply extends and mixins on the child options,
   // but only if it is a raw options object that isn't
   // the result of another mergeOptions call.
   // Only merged options has the _base property.
+
+  // 如果不是根实例，处理extends 和 mixins
   if (!child._base) {
     if (child.extends) {
       parent = mergeOptions(parent, child.extends, vm)
