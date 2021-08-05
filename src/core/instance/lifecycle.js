@@ -187,6 +187,8 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // vm._render() 最终在watch中编译为 vnode
+      // vm._update 对比vnode 更新视图
       vm._update(vm._render(), hydrating)
     }
   }
