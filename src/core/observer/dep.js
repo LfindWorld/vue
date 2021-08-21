@@ -6,6 +6,7 @@ import config from '../config'
 
 let uid = 0
 
+// 一个响应属性都有唯一的 Dep
 /**
  * A dep is an observable that can have multiple
  * directives subscribing to it.
@@ -50,6 +51,9 @@ export default class Dep {
   }
 }
 
+// Dep.target 存放目前正在使用的Watcher
+// 全局唯一，同时只有一个Watcher被使用
+
 // The current target watcher being evaluated.
 // This is globally unique because only one watcher
 // can be evaluated at a time.
@@ -57,6 +61,7 @@ Dep.target = null
 const targetStack = []
 
 export function pushTarget (target: ?Watcher) {
+  // 存入一个栈，如果有子组件，先处理子组件
   targetStack.push(target)
   Dep.target = target
 }

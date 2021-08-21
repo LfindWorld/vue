@@ -709,6 +709,7 @@
 
   var uid = 0;
 
+  // 一个响应属性都有唯一的 Dep
   /**
    * A dep is an observable that can have multiple
    * directives subscribing to it.
@@ -728,6 +729,7 @@
 
   Dep.prototype.depend = function depend () {
     if (Dep.target) {
+      // 使用 Watch 类 的addDep 调用 Dep 类的 addSub 方法，把自己添加进subs
       Dep.target.addDep(this);
     }
   };
@@ -746,6 +748,9 @@
     }
   };
 
+  // Dep.target 存放目前正在使用的Watcher
+  // 全局唯一，同时只有一个Watcher被使用
+
   // The current target watcher being evaluated.
   // This is globally unique because only one watcher
   // can be evaluated at a time.
@@ -753,6 +758,7 @@
   var targetStack = [];
 
   function pushTarget (target) {
+    // 存入一个栈，如果有子组件，先处理子组件
     targetStack.push(target);
     Dep.target = target;
   }
@@ -923,6 +929,7 @@
     this.value = value;
     this.dep = new Dep();
     this.vmCount = 0;
+    // data属性中增加一个 _ob_ 属性, 值为 Observer 实例
     def(value, '__ob__', this);
     if (Array.isArray(value)) {
       if (hasProto) {
@@ -932,6 +939,7 @@
       }
       this.observeArray(value);
     } else {
+      // 遍历所有的 data 中属性，设置为响应式属性，并且收集依赖，在 setter 中发布通知
       this.walk(value);
     }
   };
@@ -1018,6 +1026,7 @@
     customSetter,
     shallow
   ) {
+    // 初始化一个被观察者
     var dep = new Dep();
 
     var property = Object.getOwnPropertyDescriptor(obj, key);
@@ -1038,6 +1047,7 @@
       configurable: true,
       get: function reactiveGetter () {
         var value = getter ? getter.call(obj) : val;
+        // Dep 类被添加了 Watch 观察者
         if (Dep.target) {
           dep.depend();
           if (childOb) {
@@ -3740,7 +3750,7 @@
               if (isUndef(factory.resolved)) {
                 reject(
                    ("timeout (" + (res.timeout) + "ms)")
-                    
+
                 );
               }
             }, res.timeout);
@@ -3812,6 +3822,7 @@
   }
 
   function eventsMixin (Vue) {
+    // 设置原型的 $on $once $emit
     var hookRE = /^hook:/;
     Vue.prototype.$on = function (event, fn) {
       var vm = this;
@@ -4079,6 +4090,7 @@
       };
     }
 
+    // 创建一个渲染Watcher
     // we set this to vm._watcher inside the watcher's constructor
     // since the watcher's initial patch may call $forceUpdate (e.g. inside child
     // component's mounted hook), which relies on vm._watcher being already defined
@@ -4436,6 +4448,7 @@
     isRenderWatcher
   ) {
     this.vm = vm;
+    // 编辑渲染 Watcher
     if (isRenderWatcher) {
       vm._watcher = this;
     }
@@ -4741,6 +4754,7 @@
           vm
         );
       } else if (!isReserved(key)) {
+        // vm实例挂载响应式属性，值从_data 中获取
         proxy(vm, "_data", key);
       }
     }
@@ -4916,6 +4930,9 @@
   }
 
   function stateMixin (Vue) {
+    // 设置 $data  $props 的getter、setter
+    // 设置原型 $set $del，$watch 方法
+
     // flow somehow has problems with directly declared definition object
     // when using Object.defineProperty, so we have to procedurally build up
     // the object here.
@@ -4983,8 +5000,10 @@
         mark(startTag);
       }
 
+      // Vue的实例不会被观察
       // a flag to avoid this being observed
       vm._isVue = true;
+      // 合并选项
       // merge options
       if (options && options._isComponent) {
         // optimize internal component instantiation
@@ -4992,6 +5011,7 @@
         // internal component options needs special treatment.
         initInternalComponent(vm, options);
       } else {
+
         vm.$options = mergeOptions(
           resolveConstructorOptions(vm.constructor),
           options || {},
@@ -5009,6 +5029,7 @@
       initRender(vm);
       callHook(vm, 'beforeCreate');
       initInjections(vm); // resolve injections before data/props
+      // 把 props、data、computed、watch 转换为 响应式数据
       initState(vm);
       initProvide(vm); // resolve provide after data/props
       callHook(vm, 'created');
@@ -5046,7 +5067,9 @@
   }
 
   function resolveConstructorOptions (Ctor) {
+    // 解析构造函数选项
     var options = Ctor.options;
+    // 这里应该是组件
     if (Ctor.super) {
       var superOptions = resolveConstructorOptions(Ctor.super);
       var cachedSuperOptions = Ctor.superOptions;
@@ -5082,6 +5105,11 @@
     return modified
   }
 
+  /**
+   * 此模块定义Vue的原型方法
+   * init、state、事件和生命周期
+   */
+
   function Vue (options) {
     if (
       !(this instanceof Vue)
@@ -5090,11 +5118,15 @@
     }
     this._init(options);
   }
-
+  // 设置原型的 _init
   initMixin(Vue);
+  // 设置原型的 $set $del $wather
   stateMixin(Vue);
+  // 设置原型的 $on $once $emit
   eventsMixin(Vue);
+  // 设置原型的_update $forceUpdate $destroy
   lifecycleMixin(Vue);
+  // 设置原型 $nextTick _o _n _c 等
   renderMixin(Vue);
 
   /*  */
@@ -5431,6 +5463,7 @@
     }
     Object.defineProperty(Vue, 'config', configDef);
 
+    // util方法最好不要在外部使用
     // exposed util methods.
     // NOTE: these are not considered part of the public API - avoid relying on
     // them unless you are aware of the risk.
@@ -5468,8 +5501,14 @@
     initAssetRegisters(Vue);
   }
 
+  /**
+   * 此文件定义了Vue的静态属性和ssr相关
+   */
+
+  // 定义Vue静态方法
   initGlobalAPI(Vue);
 
+  // ssr相关
   Object.defineProperty(Vue.prototype, '$isServer', {
     get: isServerRendering
   });
@@ -9068,6 +9107,7 @@
 
   /*  */
 
+  // 安装平台的默认配置，如是否内置标签，属性等
   // install platform specific utils
   Vue.config.mustUseProp = mustUseProp;
   Vue.config.isReservedTag = isReservedTag;
@@ -9075,13 +9115,16 @@
   Vue.config.getTagNamespace = getTagNamespace;
   Vue.config.isUnknownElement = isUnknownElement;
 
+  // 安装平台相关的组件和指令v-model v-show，Transition TransitionGroup
   // install platform runtime directives & components
   extend(Vue.options.directives, platformDirectives);
   extend(Vue.options.components, platformComponents);
 
+  // 安装patch函数（比较vnode）
   // install platform patch function
   Vue.prototype.__patch__ = inBrowser ? patch : noop;
 
+  // Vue原型挂载 $mount
   // public mount method
   Vue.prototype.$mount = function (
     el,
@@ -10344,7 +10387,7 @@
             name = name.slice(1, -1);
           }
           if (
-            
+
             value.trim().length === 0
           ) {
             warn$2(
@@ -10479,7 +10522,7 @@
     var map = {};
     for (var i = 0, l = attrs.length; i < l; i++) {
       if (
-        
+
         map[attrs[i].name] && !isIE && !isEdge
       ) {
         warn$2('duplicate attribute: ' + attrs[i].name, attrs[i]);
@@ -11893,10 +11936,13 @@
     template,
     options
   ) {
+    // 把模板编译为抽象语法树
     var ast = parse(template.trim(), options);
     if (options.optimize !== false) {
+      // 优化抽象语法树，主要是标记静态节点
       optimize(ast, options);
     }
+    // 把抽象语法树生成字符串形式的js代码
     var code = generate(ast, options);
     return {
       ast: ast,
@@ -11937,6 +11983,7 @@
     el,
     hydrating
   ) {
+    // 获取dom节点
     el = el && query(el);
 
     /* istanbul ignore if */
@@ -11950,6 +11997,10 @@
     var options = this.$options;
     // resolve template/el and convert to render function
     if (!options.render) {
+      // 如果没有render函数，那么需要获取模板
+      // 模板选项可以为字符串或者元素或者属性节点
+      // 如果没有指定模板选项，获取el的值给模板选项
+      // 然后编译模板
       var template = options.template;
       if (template) {
         if (typeof template === 'string') {

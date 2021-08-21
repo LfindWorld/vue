@@ -37,11 +37,13 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
       )
+      console.log(options);
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {

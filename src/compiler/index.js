@@ -12,10 +12,13 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
+  // 把模板编译为抽象语法树
   const ast = parse(template.trim(), options)
   if (options.optimize !== false) {
+    // 优化抽象语法树，主要是标记静态节点
     optimize(ast, options)
   }
+  // 把抽象语法树生成字符串形式的js代码
   const code = generate(ast, options)
   return {
     ast,
