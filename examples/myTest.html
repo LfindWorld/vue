@@ -10,31 +10,25 @@
 </head>
 <body>
   <div id="app">
-    <h1 @click="test">{{msg}}</h1>
-    <h1 @click="test">{{name}}</h1>
-    <h2>{{age}}</h2>
-    <h2>{{sex}}</h2>
-    <button @click="click">按钮</button>
+    <h1>{{msg}}</h1>
+    <p>1</p>
+    <button @click="change">change</button>
   </div>
   <script>
+    Vue.component('zhangsan', function() {
+      console.log(1213);
+    })
     const vm = new Vue({
       el: '#app',
       data: {
-        msg: 'hello',
-        name: '李大胖',
-        age: 18,
-        sex: '女'
+        msg: 'hello'
       },
-      created(){
-        console.log(this)
+      beforeCreate() {
+        console.log(666)
       },
       methods: {
-        test() {
-          this.msg = '大胖';
-        },
-        click() {
-          console.log(this.$options.data)
-          this.msg = this.$options.data().msg;
+        change() {
+          this.msg = '张三'
         }
       }
     });

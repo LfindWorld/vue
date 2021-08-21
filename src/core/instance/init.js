@@ -26,10 +26,10 @@ export function initMixin (Vue: Class<Component>) {
       mark(startTag)
     }
 
-    // Vue的实例不会被观察
+    // 1. Vue的实例不会被观察, 标记vm是Vue根实例
     // a flag to avoid this being observed
     vm._isVue = true
-    // 合并选项
+    // 2. 合并选项
     // merge options
     if (options && options._isComponent) {
       // optimize internal component instantiation
@@ -47,15 +47,21 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 如果支持proxy 使用 proxy代理 _renderProxy
       initProxy(vm)
     } else {
       vm._renderProxy = vm
     }
     // expose real self
+    // 保存this
     vm._self = vm
+    // 初始化生命周期
     initLifecycle(vm)
+    // 初始化_events _hasHookEvent
     initEvents(vm)
+    // 这里不知道干啥
     initRender(vm)
+    // 触发生命周期
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
     // 把 props、data、computed、watch 转换为 响应式数据
@@ -97,6 +103,8 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   // 解析构造函数选项
+  // 这里解析 options对象，这时里面存储有全局组件、全局指令、全局过滤器
+  // 这里的内容有默认注入的，和平台注入的
   let options = Ctor.options
   // 这里应该是组件
   if (Ctor.super) {

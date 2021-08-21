@@ -50,13 +50,17 @@ export default class Watcher {
     options?: ?Object,
     isRenderWatcher?: boolean
   ) {
+    // 保存一下当前实例
     this.vm = vm
     // 编辑渲染 Watcher
     if (isRenderWatcher) {
+      // 标记为渲染 Watcher
       vm._watcher = this
     }
+    // 保存当前 Watcher
     vm._watchers.push(this)
     // options
+    // 渲染 Watcher options对象有before函数
     if (options) {
       this.deep = !!options.deep
       this.user = !!options.user
@@ -101,10 +105,12 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    // 保存当前Watcher到dep中
     pushTarget(this)
     let value
     const vm = this.vm
     try {
+      // 执行 _update()对比新旧vnode
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -118,6 +124,7 @@ export default class Watcher {
       if (this.deep) {
         traverse(value)
       }
+      // dep用完了 出栈
       popTarget()
       this.cleanupDeps()
     }

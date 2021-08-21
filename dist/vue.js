@@ -1536,6 +1536,7 @@
     vm
   ) {
     {
+      // 校验自定义组件名是否合法
       checkComponents(child);
     }
 
@@ -1543,14 +1544,19 @@
       child = child.options;
     }
 
+    // 格式化props
     normalizeProps(child, vm);
+    // 格式化inject
     normalizeInject(child, vm);
+    // 格式化指令
     normalizeDirectives(child);
 
     // Apply extends and mixins on the child options,
     // but only if it is a raw options object that isn't
     // the result of another mergeOptions call.
     // Only merged options has the _base property.
+
+    // 如果不是根实例，处理extends 和 mixins
     if (!child._base) {
       if (child.extends) {
         parent = mergeOptions(parent, child.extends, vm);
@@ -3786,6 +3792,7 @@
     vm._hasHookEvent = false;
     // init parent attached events
     var listeners = vm.$options._parentListeners;
+    // 初始化时没有 listeners
     if (listeners) {
       updateComponentListeners(vm, listeners);
     }
@@ -4952,9 +4959,11 @@
         warn("$props is readonly.", this);
       };
     }
+    // 设置原型方法 $data和$props,分别指向 _data 和 _props
     Object.defineProperty(Vue.prototype, '$data', dataDef);
     Object.defineProperty(Vue.prototype, '$props', propsDef);
 
+    // 设置原型法法 $set、$delete、$watch
     Vue.prototype.$set = set;
     Vue.prototype.$delete = del;
 
@@ -5000,10 +5009,10 @@
         mark(startTag);
       }
 
-      // Vue的实例不会被观察
+      // 1. Vue的实例不会被观察, 标记vm是Vue根实例
       // a flag to avoid this being observed
       vm._isVue = true;
-      // 合并选项
+      // 2. 合并选项
       // merge options
       if (options && options._isComponent) {
         // optimize internal component instantiation
@@ -5020,13 +5029,19 @@
       }
       /* istanbul ignore else */
       {
+        // 如果支持proxy 使用 proxy代理 _renderProxy
         initProxy(vm);
       }
       // expose real self
+      // 保存this
       vm._self = vm;
+      // 初始化生命周期
       initLifecycle(vm);
+      // 初始化_events _hasHookEvent
       initEvents(vm);
+      // 这里不知道干啥
       initRender(vm);
+      // 触发生命周期
       callHook(vm, 'beforeCreate');
       initInjections(vm); // resolve injections before data/props
       // 把 props、data、computed、watch 转换为 响应式数据
@@ -5068,6 +5083,8 @@
 
   function resolveConstructorOptions (Ctor) {
     // 解析构造函数选项
+    // 这里解析 options对象，这时里面存储有全局组件、全局指令、全局过滤器
+    // 这里的内容有默认注入的，和平台注入的
     var options = Ctor.options;
     // 这里应该是组件
     if (Ctor.super) {
@@ -5106,7 +5123,8 @@
   }
 
   /**
-   * 此模块定义Vue的原型方法
+   * 001
+   * INIT 此模块定义Vue的原型方法
    * init、state、事件和生命周期
    */
 
@@ -5116,16 +5134,24 @@
     ) {
       warn('Vue is a constructor and should be called with the `new` keyword');
     }
+    // 开始初始化，开始没有调用，new的时候开始调用
     this._init(options);
   }
-  // 设置原型的 _init
+
+  // 这里开始挂载静态方法和实例方法
+
+  // 设置原型方法 _init，此处还没执行
   initMixin(Vue);
-  // 设置原型的 $set $del $wather
+
+  // 设置原型的 $set $del $wather 设置原型方法 $data和$props,分别指向 _data 和 _props
   stateMixin(Vue);
-  // 设置原型的 $on $once $emit
+
+  // 设置原型方法 $on $once $emit
   eventsMixin(Vue);
-  // 设置原型的_update $forceUpdate $destroy
+
+  // 设置原型方法 $_update $forceUpdate $destroy
   lifecycleMixin(Vue);
+
   // 设置原型 $nextTick _o _n _c 等
   renderMixin(Vue);
 
@@ -5461,6 +5487,7 @@
         );
       };
     }
+    // 增加静态属性 config
     Object.defineProperty(Vue, 'config', configDef);
 
     // util方法最好不要在外部使用
@@ -5474,38 +5501,59 @@
       defineReactive: defineReactive
     };
 
+    // 增加静态方法 set、 delete、nextTick
     Vue.set = set;
     Vue.delete = del;
     Vue.nextTick = nextTick;
 
+    // 增加静态方法 observable
     // 2.6 explicit observable API
     Vue.observable = function (obj) {
       observe(obj);
       return obj
     };
 
+  // 这里增加了静态属性 options 并且 options 对象里增加了全局组件位置 component 、directive和filter
+
     Vue.options = Object.create(null);
     ASSET_TYPES.forEach(function (type) {
       Vue.options[type + 's'] = Object.create(null);
     });
 
+  // 保存了 Vue 构造函数到options属性的_base属性中
     // this is used to identify the "base" constructor to extend all plain-object
     // components with in Weex's multi-instance scenarios.
     Vue.options._base = Vue;
 
+    // 全局组件增加了 KeepAlive 组件
     extend(Vue.options.components, builtInComponents);
 
+    // 增加了静态方法 use (挂载插件)
     initUse(Vue);
+
+    // 增加了静态方法 mixin (混入)
     initMixin$1(Vue);
+
+    // 增加了 静态方法 extend (继承)
     initExtend(Vue);
+
+    // 增加了 静态方法 component 、directive和filter 这里是方法，注册组件、指令、和筛选器
     initAssetRegisters(Vue);
   }
 
   /**
+   * 002
    * 此文件定义了Vue的静态属性和ssr相关
    */
 
   // 定义Vue静态方法
+  // set、 delete、nextTick、observable
+  // 里增加了静态属性 options 并且 options 对象里增加了全局组件位置 component 、directive和filter
+  // 全局组件增加了 KeepAlive 组件
+  // 增加了静态方法 use (挂载插件)
+  // 增加了静态方法 mixin (混入)
+  // 增加了 静态方法 extend (继承)
+  // 增加了 静态方法 component 、directive和filter 这里是方法，注册组件、指令、和筛选器
   initGlobalAPI(Vue);
 
   // ssr相关
@@ -9120,7 +9168,7 @@
   extend(Vue.options.directives, platformDirectives);
   extend(Vue.options.components, platformComponents);
 
-  // 安装patch函数（比较vnode）
+  // 安装原型方法patch（比较vnode）
   // install platform patch function
   Vue.prototype.__patch__ = inBrowser ? patch : noop;
 
@@ -11979,6 +12027,7 @@
   });
 
   var mount = Vue.prototype.$mount;
+
   Vue.prototype.$mount = function (
     el,
     hydrating
@@ -11987,6 +12036,7 @@
     el = el && query(el);
 
     /* istanbul ignore if */
+    // el 不能是根节点
     if (el === document.body || el === document.documentElement) {
        warn(
         "Do not mount Vue to <html> or <body> - mount to normal elements instead."

@@ -143,8 +143,10 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
+  // 保存一下根节点
   vm.$el = el
   if (!vm.$options.render) {
+    // 如果没有没有render函数没有挂载成功，兼容一下，一般不会进入此处。
     vm.$options.render = createEmptyVNode
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
@@ -164,6 +166,7 @@ export function mountComponent (
       }
     }
   }
+  // 触发beforeMount生命周期
   callHook(vm, 'beforeMount')
 
   let updateComponent
@@ -187,14 +190,17 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // vm._render() 方法在 ./render.js中定义，作用是吧el编译为vnode
+      // vm._update 对比vnode 更新视图
       vm._update(vm._render(), hydrating)
     }
   }
 
-  // 创建一个渲染Watcher
+  // 创建一个渲染Watcher, 传入更新组件方法，在watcher中后续执行
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // noop是一个空函数，第五个参数表明这是一个渲染Watcher
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
@@ -209,6 +215,7 @@ export function mountComponent (
   if (vm.$vnode == null) {
     vm._isMounted = true
     callHook(vm, 'mounted')
+    // 触发mounted生命周期
   }
   return vm
 }

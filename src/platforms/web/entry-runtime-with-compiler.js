@@ -1,6 +1,7 @@
 /* @flow */
 
 /**
+ * 004
  * 重写了Vue原型上的$mount方法，增加编辑模板的能力（这是带编译器的完整版本）
  * 此文件重点是编译模板
  */
@@ -20,6 +21,7 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -28,6 +30,7 @@ Vue.prototype.$mount = function (
   el = el && query(el)
 
   /* istanbul ignore if */
+  // el 不能是根节点
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
