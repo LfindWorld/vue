@@ -42,6 +42,7 @@ Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // Vue原型挂载 $mount
 // public mount method
+// init方法之后，准备工作都已经完成了，jump show time
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean

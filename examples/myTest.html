@@ -10,7 +10,8 @@
 <body>
   <div id="app">
     <h1>{{msg}}</h1>
-    <zhangsan  />
+    <p>1</p>
+    <button @click="change">change</button>
   </div>
   <script>
     Vue.component('zhangsan', function() {
@@ -23,6 +24,11 @@
       },
       beforeCreate() {
         console.log(666)
+      },
+      methods: {
+        change() {
+          this.msg = '张三'
+        }
       }
     })
   </script>
